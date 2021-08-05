@@ -15,8 +15,8 @@ public class AppTest {
   @Test
   public void test() throws InterruptedException {
 
-    opaqueImage = new ImageIcon("C:\\Users\\durychno\\Dev\\drd\\circle-opaque.png").getImage();
-    transparentImage = new ImageIcon("C:\\Users\\durychno\\Dev\\drd\\circle-transparent.png").getImage();
+    opaqueImage = loadImage("circle-opaque.png");
+    transparentImage = loadImage("circle-transparent.png");
 
     var mode = new DisplayMode(1920, 1200, 32, DisplayMode.REFRESH_RATE_UNKNOWN);
     var frame = createFrame();
@@ -30,6 +30,10 @@ public class AppTest {
     System.out.println("DONE");
   }
 
+  private Image loadImage(String path) {
+    return new ImageIcon(getClass().getClassLoader().getResource(path)).getImage();
+  }
+
   private JFrame createFrame() {
     return new JFrame() {
       {
@@ -39,7 +43,6 @@ public class AppTest {
       }
       public void paint(Graphics g) {
         super.paint(g);
-        g.drawString("Hello World!", 20, 50);
         drawImage(g, opaqueImage, 0, 0, "Opaque");
         drawImage(g, transparentImage, 800, 0, "Transparent");
       }
