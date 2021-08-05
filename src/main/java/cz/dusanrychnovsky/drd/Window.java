@@ -36,4 +36,12 @@ public class Window {
     }
     device.setFullScreenWindow(null);
   }
+
+  public int getWidth() {
+    return device.getFullScreenWindow().getWidth();
+  }
+
+  public int getHeight() {
+    return device.getFullScreenWindow().getHeight();
+  }
 }

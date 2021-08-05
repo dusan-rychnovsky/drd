@@ -9,6 +9,7 @@ public class AppTest {
 
   private static final int FONT_SIZE = 24;
 
+  private Window window;
   private Image opaqueImage;
   private Image transparentImage;
 
@@ -18,10 +19,9 @@ public class AppTest {
     opaqueImage = loadImage("circle-opaque.png");
     transparentImage = loadImage("circle-transparent.png");
 
+    window = new Window();
     var mode = new DisplayMode(1920, 1200, 32, DisplayMode.REFRESH_RATE_UNKNOWN);
     var frame = createFrame();
-
-    var window = new Window();
     window.setFullScreen(mode, frame);
 
     Thread.sleep(5_000);
@@ -43,8 +43,8 @@ public class AppTest {
       }
       public void paint(Graphics g) {
         super.paint(g);
-        drawImage(g, opaqueImage, 0, 0, "Opaque");
-        drawImage(g, transparentImage, 800, 0, "Transparent");
+        benchmarkImage(g, opaqueImage, 0, 0, "Opaque");
+        benchmarkImage(g, transparentImage, 800, 0, "Transparent");
       }
     };
   }
@@ -52,5 +52,23 @@ public class AppTest {
   private void drawImage(Graphics g, Image image, int posX, int posY, String caption) {
     g.drawImage(image, posX, posY, null);
     g.drawString(caption, posX + 5, posY + FONT_SIZE + image.getHeight(null));
+  }
+
+  private void benchmarkImage(Graphics g, Image image, int posX, int posY, String caption) {
+    int marginX = window.getWidth() - image.getWidth(null);
+    int marginY = window.getHeight() - image.getHeight(null);
+
+    int num = 0;
+    var startTime = System.currentTimeMillis();
+    while (System.currentTimeMillis() - startTime < 1500) {
+      var x = Math.round((float)Math.random() * marginX);
+      var y = Math.round((float)Math.random() * marginY);
+      g.drawImage(image, x, y, null);
+      num++;
+    }
+
+    var time = System.currentTimeMillis() - startTime;
+    var speed = num * 1000f / time;
+    System.out.println(caption + ": " + speed + "imgs/sec");
   }
 }
