@@ -12,7 +12,8 @@ public class Window {
     device = environment.getDefaultScreenDevice();
   }
 
-  public void setFullScreen(DisplayMode displayMode, JFrame frame) {
+  public void setFullScreen(DisplayMode displayMode) {
+    var frame = new JFrame();
     frame.setUndecorated(true);
     frame.setResizable(false);
     device.setFullScreenWindow(frame);
@@ -35,6 +36,10 @@ public class Window {
       window.dispose();
     }
     device.setFullScreenWindow(null);
+  }
+
+  public Graphics getGraphics() {
+    return device.getFullScreenWindow().getGraphics();
   }
 
   public int getWidth() {
