@@ -69,6 +69,7 @@ public class AppTest {
     g.drawImage(bgImage, 0, 0, null);
     g.drawImage(animation.getImage(), 0, 0, null);
     g.dispose();
+    window.update();
   }
 
   private Image loadImage(String path) {
