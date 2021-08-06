@@ -2,6 +2,7 @@ package cz.dusanrychnovsky.drd;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 import org.junit.Test;
 
@@ -85,13 +86,19 @@ public class AppTest {
   private void draw() {
     var g = window.getGraphics();
     g.drawImage(bgImage, 0, 0, null);
-    g.drawImage(
-      sprite.getImage(),
-      Math.round(sprite.getPosX()),
-      Math.round(sprite.getPosY()),
-      null);
+    drawSprite(g, sprite);
     g.dispose();
     window.update();
+  }
+
+  private void drawSprite(Graphics2D g, Sprite sprite) {
+    var transform = new AffineTransform();
+    transform.setToTranslation(sprite.getPosX(), sprite.getPosY());
+    if (sprite.getDX() < 0) {
+      transform.scale(-1, 1);
+      transform.translate(-sprite.getWidth(), 0);
+    }
+    g.drawImage(sprite.getImage(), transform, null);
   }
 
   private Image loadImage(String path) {
