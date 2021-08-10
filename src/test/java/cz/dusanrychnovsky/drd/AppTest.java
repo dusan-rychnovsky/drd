@@ -3,12 +3,17 @@ package cz.dusanrychnovsky.drd;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.util.List;
+import java.util.Arrays;
 
 import org.junit.Test;
 
 public class AppTest {
 
   private static final int DEMO_TIME = 10_000;
+  private static final List<DisplayMode> DISPLAY_MODES = Arrays.asList(
+    new DisplayMode(1920, 1200, 32, DisplayMode.REFRESH_RATE_UNKNOWN)
+  );
 
   private Window window;
   private Image bgImage;
@@ -18,7 +23,7 @@ public class AppTest {
   public void test() {
 
     window = new Window();
-    window.setFullScreen(new DisplayMode(1920, 1200, 32, DisplayMode.REFRESH_RATE_UNKNOWN));
+    window.setFullScreen(DISPLAY_MODES);
 
     bgImage = loadImage("background.jpg");
     sprite = loadSprite();
