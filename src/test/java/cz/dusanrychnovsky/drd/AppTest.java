@@ -15,6 +15,8 @@ public class AppTest {
     new DisplayMode(1920, 1200, 32, DisplayMode.REFRESH_RATE_UNKNOWN)
   );
 
+  private long totalTime = 0;
+
   private Window window;
   private Image bgImage;
   private Sprite sprite;
@@ -28,7 +30,8 @@ public class AppTest {
     bgImage = loadImage("background.jpg");
     sprite = loadSprite();
 
-    loop();
+    var loop = new Loop(this::update, this::draw);
+    loop.run();
 
     window.restoreScreen();
     System.out.println("DONE");
@@ -57,25 +60,12 @@ public class AppTest {
     return sprite;
   }
 
-  private void loop() {
-    var startTime = System.currentTimeMillis();
-    var currTime = startTime;
+  private void update(Loop loop, long elapsedTime) {
 
-    while (currTime - startTime < DEMO_TIME) {
-      var elapsedTime = System.currentTimeMillis() - currTime;
-      currTime += elapsedTime;
-
-      update(elapsedTime);
-      draw();
-
-      try {
-        Thread.sleep(20);
-      }
-      catch (InterruptedException ex) {}
+    totalTime += elapsedTime;
+    if (totalTime >= DEMO_TIME) {
+      loop.stop();
     }
-  }
-
-  private void update(long elapsedTime) {
 
     if (sprite.getPosX() <= 0 || sprite.getPosX() + sprite.getWidth() >= window.getWidth()) {
       sprite.setVelocity(-sprite.getDX(), sprite.getDY());
