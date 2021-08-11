@@ -2,7 +2,10 @@ package cz.dusanrychnovsky.drd;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 
@@ -10,17 +13,15 @@ import org.junit.Test;
 
 public class AppTest {
 
-  private static final int DEMO_TIME = 10_000;
   private static final List<DisplayMode> DISPLAY_MODES = Arrays.asList(
     new DisplayMode(1920, 1200, 32, DisplayMode.REFRESH_RATE_UNKNOWN)
   );
 
-  private long totalTime = 0;
+  private static final int FONT_SIZE = 12;
+  private List<String> messages = new ArrayList<>();
 
   private Window window;
   private Loop loop;
-  private Image bgImage;
-  private Sprite sprite;
 
   @Test
   public void test() {
@@ -28,76 +29,63 @@ public class AppTest {
     window = new Window();
     window.setFullScreen(DISPLAY_MODES);
 
-    bgImage = loadImage("background.jpg");
-    sprite = loadSprite();
-
     loop = new Loop(this::update, this::draw);
+
+    window.addKeyListener(new KeyListener() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        var code = e.getKeyCode();
+        add("Stisknuto: " + KeyEvent.getKeyText(code));
+        e.consume();
+
+        if (code == KeyEvent.VK_ESCAPE) {
+          loop.stop();
+        }
+      }
+
+      @Override
+      public void keyReleased(KeyEvent e) {
+        var code = e.getKeyCode();
+        add("Uvolneno: " + KeyEvent.getKeyText(code));
+        e.consume();
+      }
+
+      @Override
+      public void keyTyped(KeyEvent e) {
+        e.consume();
+      }
+    });
+
     loop.run();
 
     window.restoreScreen();
     System.out.println("DONE");
   }
 
-  private Sprite loadSprite() {
-
-    var player1 = loadImage("player1.png");
-    var player2 = loadImage("player2.png");
-    var player3 = loadImage("player3.png");
-    var animation = Animation.builder()
-      .addFrame(player1, 250)
-      .addFrame(player2, 150)
-      .addFrame(player1, 150)
-      .addFrame(player2, 150)
-      .addFrame(player3, 200)
-      .addFrame(player2, 150)
-      .build();
-
-    var sprite = new Sprite(animation, 0.f, 0.f);
-    var posX = Math.random() * (window.getWidth() - sprite.getWidth());
-    var posY = Math.random() * (window.getHeight() - sprite.getHeight());
-    sprite.setPosition((float) posX, (float) posY);
-    sprite.setVelocity((float) Math.random() - 0.5f, (float) Math.random() - 0.5f);
-
-    return sprite;
-  }
-
   private void update(long elapsedTime) {
-
-    totalTime += elapsedTime;
-    if (totalTime >= DEMO_TIME) {
-      loop.stop();
-    }
-
-    if (sprite.getPosX() <= 0 || sprite.getPosX() + sprite.getWidth() >= window.getWidth()) {
-      sprite.setVelocity(-sprite.getDX(), sprite.getDY());
-    }
-
-    if (sprite.getPosY() <= 0 || sprite.getPosY() + sprite.getHeight() >= window.getHeight()) {
-      sprite.setVelocity(sprite.getDX(), -sprite.getDY());
-    }
-
-    sprite.update(elapsedTime);
   }
 
-  private void draw() {
+  private synchronized void add(String message) {
+    messages.add(message);
+    if (messages.size() >= window.getHeight() / FONT_SIZE) {
+      messages.remove(0);
+    }
+  }
+
+  private synchronized void draw() {
     var g = window.getGraphics();
-    g.drawImage(bgImage, 0, 0, null);
-    drawSprite(g, sprite);
+
+    g.setColor(Color.BLUE);
+    g.fillRect(0, 0, window.getWidth(), window.getHeight());
+
+    g.setColor(Color.WHITE);
+    var y = FONT_SIZE;
+    for (var message : messages) {
+      g.drawString(message, 5, y);
+      y += FONT_SIZE;
+    }
+
     g.dispose();
     window.update();
-  }
-
-  private void drawSprite(Graphics2D g, Sprite sprite) {
-    var transform = new AffineTransform();
-    transform.setToTranslation(sprite.getPosX(), sprite.getPosY());
-    if (sprite.getDX() < 0) {
-      transform.scale(-1, 1);
-      transform.translate(-sprite.getWidth(), 0);
-    }
-    g.drawImage(sprite.getImage(), transform, null);
-  }
-
-  private Image loadImage(String path) {
-    return new ImageIcon(getClass().getClassLoader().getResource(path)).getImage();
   }
 }

@@ -2,6 +2,7 @@ package cz.dusanrychnovsky.drd;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyListener;
 
 public class Window {
 
@@ -31,6 +32,8 @@ public class Window {
     }
 
     frame.createBufferStrategy(2);
+
+    device.getFullScreenWindow().setFocusTraversalKeysEnabled(false);
   }
 
   private boolean setDisplayMode(Iterable<DisplayMode> displayModes) {
@@ -82,6 +85,10 @@ public class Window {
       strategy.show();
     }
     Toolkit.getDefaultToolkit().sync();
+  }
+
+  public void addKeyListener(KeyListener listener) {
+    device.getFullScreenWindow().addKeyListener(listener);
   }
 
   public int getWidth() {
