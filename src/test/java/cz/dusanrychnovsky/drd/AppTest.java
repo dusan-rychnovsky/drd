@@ -18,6 +18,7 @@ public class AppTest {
   private long totalTime = 0;
 
   private Window window;
+  private Loop loop;
   private Image bgImage;
   private Sprite sprite;
 
@@ -30,7 +31,7 @@ public class AppTest {
     bgImage = loadImage("background.jpg");
     sprite = loadSprite();
 
-    var loop = new Loop(this::update, this::draw);
+    loop = new Loop(this::update, this::draw);
     loop.run();
 
     window.restoreScreen();
@@ -60,7 +61,7 @@ public class AppTest {
     return sprite;
   }
 
-  private void update(Loop loop, long elapsedTime) {
+  private void update(long elapsedTime) {
 
     totalTime += elapsedTime;
     if (totalTime >= DEMO_TIME) {

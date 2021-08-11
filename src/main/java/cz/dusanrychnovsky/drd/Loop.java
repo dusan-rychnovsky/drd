@@ -29,7 +29,7 @@ public class Loop {
   }
 
   private void update(long elapsedTime) {
-    update.call(this, elapsedTime);
+    update.call(elapsedTime);
   }
 
   private void draw() {
@@ -41,7 +41,7 @@ public class Loop {
   }
 
   public interface Update {
-    void call(Loop loop, long elapsedTime);
+    void call(long elapsedTime);
   }
 
   public interface Draw {
