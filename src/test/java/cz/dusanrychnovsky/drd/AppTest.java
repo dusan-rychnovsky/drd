@@ -1,10 +1,10 @@
 package cz.dusanrychnovsky.drd;
 
-import javax.swing.*;
+import cz.dusanrychnovsky.drd.graphics.Window;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;

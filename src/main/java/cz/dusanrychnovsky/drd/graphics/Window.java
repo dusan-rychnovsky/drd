@@ -1,4 +1,4 @@
-package cz.dusanrychnovsky.drd;
+package cz.dusanrychnovsky.drd.graphics;
 
 import javax.swing.*;
 import java.awt.*;
