@@ -39,7 +39,9 @@ public class Action {
 
   public synchronized boolean isPressed() {
     var result = pressed;
-    pressed = false;
+    if (mode == InitialPressOnly) {
+      pressed = false;
+    }
     return result;
   }
 }
