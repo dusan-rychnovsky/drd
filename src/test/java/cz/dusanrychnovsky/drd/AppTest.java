@@ -1,15 +1,22 @@
 package cz.dusanrychnovsky.drd;
 
+import cz.dusanrychnovsky.drd.graphics.Animation;
+import cz.dusanrychnovsky.drd.graphics.Sprite;
 import cz.dusanrychnovsky.drd.graphics.Window;
+import cz.dusanrychnovsky.drd.input.Action;
+import cz.dusanrychnovsky.drd.input.Input;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 
 import org.junit.Test;
+
+import javax.swing.*;
+
+import static cz.dusanrychnovsky.drd.input.Action.Mode.InitialPressOnly;
 
 public class AppTest {
 
@@ -17,11 +24,18 @@ public class AppTest {
     new DisplayMode(1920, 1200, 32, DisplayMode.REFRESH_RATE_UNKNOWN)
   );
 
-  private static final int FONT_SIZE = 12;
-  private List<String> messages = new ArrayList<>();
+  private static final float PLAYER_SPEED = .3f;
+
+  private final Action exit = new Action("exit", InitialPressOnly);
+  private final Action moveLeft = new Action("moveLeft");
+  private final Action moveRight = new Action("moveRight");
 
   private Window window;
+  private Input input;
   private Loop loop;
+
+  private Image bgImage;
+  private Sprite player;
 
   @Test
   public void test() {
@@ -29,63 +43,76 @@ public class AppTest {
     window = new Window();
     window.setFullScreen(DISPLAY_MODES);
 
+    input = new Input(window);
+    input.mapToKey(exit, KeyEvent.VK_ESCAPE);
+    input.mapToKey(moveLeft, KeyEvent.VK_LEFT);
+    input.mapToKey(moveRight, KeyEvent.VK_RIGHT);
+
+    bgImage = loadImage("background.jpg");
+    player = loadPlayer();
+
     loop = new Loop(this::update, this::draw);
-
-    window.addKeyListener(new KeyListener() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        var code = e.getKeyCode();
-        add("Stisknuto: " + KeyEvent.getKeyText(code));
-        e.consume();
-
-        if (code == KeyEvent.VK_ESCAPE) {
-          loop.stop();
-        }
-      }
-
-      @Override
-      public void keyReleased(KeyEvent e) {
-        var code = e.getKeyCode();
-        add("Uvolneno: " + KeyEvent.getKeyText(code));
-        e.consume();
-      }
-
-      @Override
-      public void keyTyped(KeyEvent e) {
-        e.consume();
-      }
-    });
-
     loop.run();
 
     window.restoreScreen();
     System.out.println("DONE");
   }
 
-  private void update(long elapsedTime) {
+  private Sprite loadPlayer() {
+    var player1 = loadImage("player1.png");
+    var player2 = loadImage("player2.png");
+    var player3 = loadImage("player3.png");
+    var animation = Animation.builder()
+      .addFrame(player1, 250)
+      .addFrame(player2, 150)
+      .addFrame(player1, 150)
+      .addFrame(player2, 150)
+      .addFrame(player3, 200)
+      .addFrame(player2, 150)
+      .build();
+
+    var sprite = new Sprite(animation, 0.f, 0.f);
+    var posX = Math.random() * (window.getWidth() - sprite.getWidth());
+    var posY = Math.random() * (window.getHeight() - sprite.getHeight());
+    sprite.setPosition((float) posX, (float) posY);
+
+    return sprite;
   }
 
-  private synchronized void add(String message) {
-    messages.add(message);
-    if (messages.size() >= window.getHeight() / FONT_SIZE) {
-      messages.remove(0);
+  private void update(long elapsedTime) {
+    checkSystemInput();
+    checkGameInput();
+    player.update(elapsedTime);
+  }
+
+  private void checkSystemInput() {
+    if (exit.isPressed()) {
+      loop.stop();
     }
+  }
+
+  private void checkGameInput() {
+    var dX = 0.f;
+    if (moveLeft.isPressed()) {
+      dX = -PLAYER_SPEED;
+    }
+    if (moveRight.isPressed()) {
+      dX = PLAYER_SPEED;
+    }
+    player.setVelocity(dX, 0.f);
   }
 
   private synchronized void draw() {
     var g = window.getGraphics();
 
-    g.setColor(Color.BLUE);
-    g.fillRect(0, 0, window.getWidth(), window.getHeight());
-
-    g.setColor(Color.WHITE);
-    var y = FONT_SIZE;
-    for (var message : messages) {
-      g.drawString(message, 5, y);
-      y += FONT_SIZE;
-    }
+    g.drawImage(bgImage, 0, 0, null);
+    g.drawImage(player.getImage(), Math.round(player.getPosX()), Math.round(player.getPosY()), null);
 
     g.dispose();
     window.update();
+  }
+
+  private Image loadImage(String path) {
+    return new ImageIcon(getClass().getClassLoader().getResource(path)).getImage();
   }
 }
