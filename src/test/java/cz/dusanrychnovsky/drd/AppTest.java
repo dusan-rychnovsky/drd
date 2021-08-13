@@ -22,18 +22,20 @@ public class AppTest {
   );
 
   private static final float PLAYER_SPEED = .6f;
-  private static final float GRAVITY_SPEED = .02f;
+  private static final float JUMP_SPEED = -1.5f;
+  private static final float GRAVITY_SPEED = .002f;
 
   private final Action exit = new Action("exit", InitialPressOnly);
   private final Action moveLeft = new Action("moveLeft");
   private final Action moveRight = new Action("moveRight");
+  private final Action jump = new Action("jump", InitialPressOnly);
 
   private Window window;
   private Input input;
   private Loop loop;
 
   private Image bgImage;
-  private Sprite player;
+  private Player player;
 
   @Test
   public void test() {
@@ -45,9 +47,11 @@ public class AppTest {
     input.mapToKey(exit, KeyEvent.VK_ESCAPE);
     input.mapToKey(moveLeft, KeyEvent.VK_LEFT);
     input.mapToKey(moveRight, KeyEvent.VK_RIGHT);
+    input.mapToKey(jump, KeyEvent.VK_SPACE);
 
     bgImage = loadImage("background.jpg");
     player = loadPlayer();
+    player.jump();
 
     loop = new Loop(this::update, this::draw);
     loop.run();
@@ -56,7 +60,7 @@ public class AppTest {
     System.out.println("DONE");
   }
 
-  private Sprite loadPlayer() {
+  private Player loadPlayer() {
     var player1 = loadImage("player1.png");
     var player2 = loadImage("player2.png");
     var player3 = loadImage("player3.png");
@@ -69,13 +73,13 @@ public class AppTest {
       .addFrame(player2, 150)
       .build();
 
-    var sprite = (Sprite) new AnimatedSprite(animation, 0.f, 0.f);
+    var sprite = new AnimatedSprite(animation, 0.f, 0.f);
     var posX = Math.random() * (window.getWidth() - sprite.getWidth());
     var posY = Math.random() * (window.getHeight() - sprite.getHeight());
     sprite.setPosition((float) posX, (float) posY);
 
-    sprite = new WithGravity(sprite, GRAVITY_SPEED, window.getHeight());
-    return sprite;
+    var player = new Player(sprite, GRAVITY_SPEED, JUMP_SPEED, window.getHeight());
+    return player;
   }
 
   private void update(long elapsedTime) {
@@ -91,6 +95,7 @@ public class AppTest {
   }
 
   private void checkGameInput() {
+
     var dX = 0.f;
     if (moveLeft.isPressed()) {
       dX = -PLAYER_SPEED;
@@ -98,7 +103,11 @@ public class AppTest {
     if (moveRight.isPressed()) {
       dX = PLAYER_SPEED;
     }
-    player.setVelocity(dX, 0.f);
+    player.setVelocity(dX, player.getDY());
+
+    if (jump.isPressed()) {
+      player.jump();
+    }
   }
 
   private synchronized void draw() {

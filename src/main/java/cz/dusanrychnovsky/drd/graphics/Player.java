@@ -2,15 +2,18 @@ package cz.dusanrychnovsky.drd.graphics;
 
 import java.awt.*;
 
-public class WithGravity implements Sprite {
+public class Player implements Sprite {
 
   private final Sprite sprite;
-  private final float gravity;
+  private final float gravityDY;
+  private final float jumpDY;
   private final int floorY;
+  private boolean jumping;
 
-  public WithGravity(Sprite sprite, float gravity, int floorY) {
+  public Player(Sprite sprite, float gravityDY, float jumpDY, int floorY) {
     this.sprite = sprite;
-    this.gravity = gravity;
+    this.gravityDY = gravityDY;
+    this.jumpDY = jumpDY;
     this.floorY = floorY;
   }
 
@@ -59,16 +62,27 @@ public class WithGravity implements Sprite {
     sprite.setVelocity(dX, dY);
   }
 
+  public void jump() {
+    if (!jumping) {
+      jumping = true;
+      setVelocity(getDX(), jumpDY);
+    }
+  }
+
   @Override
   public void update(long elapsedTime) {
 
-    var dY = getDY() + gravity * elapsedTime;
-    if (getPosY() + getWidth() >= floorY) {
-      dY = 0.f;
-      setPosition(getPosX(), floorY - getWidth());
+    if (jumping) {
+      var dY = getDY() + gravityDY * elapsedTime;
+      setVelocity(getDX(), dY);
     }
-    setVelocity(getDX(), dY);
 
     sprite.update(elapsedTime);
+
+    if (jumping  && getPosY() + getHeight() >= floorY) {
+      jumping = false;
+      setPosition(getPosX(), floorY - getHeight());
+      setVelocity(getDX(), 0.f);
+    }
   }
 }
