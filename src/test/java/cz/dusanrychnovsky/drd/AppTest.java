@@ -1,20 +1,17 @@
 package cz.dusanrychnovsky.drd;
 
-import cz.dusanrychnovsky.drd.graphics.Animation;
-import cz.dusanrychnovsky.drd.graphics.Sprite;
+import cz.dusanrychnovsky.drd.graphics.*;
 import cz.dusanrychnovsky.drd.graphics.Window;
+import cz.dusanrychnovsky.drd.input.*;
 import cz.dusanrychnovsky.drd.input.Action;
-import cz.dusanrychnovsky.drd.input.Input;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import javax.swing.*;
 import java.util.List;
 import java.util.Arrays;
 
 import org.junit.Test;
-
-import javax.swing.*;
 
 import static cz.dusanrychnovsky.drd.input.Action.Mode.InitialPressOnly;
 
@@ -24,7 +21,8 @@ public class AppTest {
     new DisplayMode(1920, 1200, 32, DisplayMode.REFRESH_RATE_UNKNOWN)
   );
 
-  private static final float PLAYER_SPEED = .3f;
+  private static final float PLAYER_SPEED = .6f;
+  private static final float GRAVITY_SPEED = .02f;
 
   private final Action exit = new Action("exit", InitialPressOnly);
   private final Action moveLeft = new Action("moveLeft");
@@ -71,11 +69,12 @@ public class AppTest {
       .addFrame(player2, 150)
       .build();
 
-    var sprite = new Sprite(animation, 0.f, 0.f);
+    var sprite = (Sprite) new AnimatedSprite(animation, 0.f, 0.f);
     var posX = Math.random() * (window.getWidth() - sprite.getWidth());
     var posY = Math.random() * (window.getHeight() - sprite.getHeight());
     sprite.setPosition((float) posX, (float) posY);
 
+    sprite = new WithGravity(sprite, GRAVITY_SPEED, window.getHeight());
     return sprite;
   }
 
