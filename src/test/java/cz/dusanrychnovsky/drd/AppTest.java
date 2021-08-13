@@ -26,6 +26,7 @@ public class AppTest {
   private static final float GRAVITY_SPEED = .002f;
 
   private final Action exit = new Action("exit", InitialPressOnly);
+  private final Action pause = new Action("pause", InitialPressOnly);
   private final Action moveLeft = new Action("moveLeft");
   private final Action moveRight = new Action("moveRight");
   private final Action jump = new Action("jump", InitialPressOnly);
@@ -37,6 +38,8 @@ public class AppTest {
   private Image bgImage;
   private Player player;
 
+  private boolean paused;
+
   @Test
   public void test() {
 
@@ -45,6 +48,7 @@ public class AppTest {
 
     input = new Input(window);
     input.mapToKey(exit, KeyEvent.VK_ESCAPE);
+    input.mapToKey(pause, KeyEvent.VK_P);
     input.mapToKey(moveLeft, KeyEvent.VK_LEFT);
     input.mapToKey(moveRight, KeyEvent.VK_RIGHT);
     input.mapToKey(jump, KeyEvent.VK_SPACE);
@@ -84,13 +88,25 @@ public class AppTest {
 
   private void update(long elapsedTime) {
     checkSystemInput();
-    checkGameInput();
-    player.update(elapsedTime);
+    if (!paused) {
+      checkGameInput();
+      player.update(elapsedTime);
+    }
   }
 
   private void checkSystemInput() {
     if (exit.isPressed()) {
       loop.stop();
+    }
+    if (pause.isPressed()) {
+      setPaused(!paused);
+    }
+  }
+
+  private void setPaused(boolean paused) {
+    if (paused != this.paused) {
+      this.paused = paused;
+      input.resetActions();
     }
   }
 
@@ -115,6 +131,11 @@ public class AppTest {
 
     g.drawImage(bgImage, 0, 0, null);
     g.drawImage(player.getImage(), Math.round(player.getPosX()), Math.round(player.getPosY()), null);
+
+    if (paused) {
+      g.setColor(Color.WHITE);
+      g.drawString("PAUSED", 20, 42);
+    }
 
     g.dispose();
     window.update();
