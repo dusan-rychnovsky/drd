@@ -2,6 +2,8 @@ package cz.dusanrychnovsky.drd;
 
 public class Loop {
 
+  private final ElapsedTime time = new ElapsedTime();
+
   private final Update update;
   private final Draw draw;
 
@@ -16,6 +18,8 @@ public class Loop {
     var currTime = System.currentTimeMillis();
     while (isRunning) {
       var elapsedTime = System.currentTimeMillis() - currTime;
+      elapsedTime = time.smoothen(elapsedTime);
+
       currTime += elapsedTime;
 
       update(elapsedTime);
