@@ -5,23 +5,9 @@ import cz.dusanrychnovsky.drd.graphics.Animation;
 
 public class Player extends AnimatedSprite {
 
-  private final float minLeftX;
-  private final float maxRightX;
+  public static final float SPEED = 1.f;
 
-  public Player(Animation animation, float posX, float posY, float minLeftX, float maxRightX) {
+  public Player(Animation animation, float posX, float posY) {
     super(animation, posX, posY);
-    this.minLeftX = minLeftX;
-    this.maxRightX = maxRightX;
-  }
-
-  @Override
-  public void update(long elapsedTime) {
-    super.update(elapsedTime);
-    if (getPosX() < minLeftX) {
-      setPosition(minLeftX, getPosY());
-    }
-    if (getPosX() + getWidth() > maxRightX) {
-      setPosition(maxRightX - getWidth(), getPosY());
-    }
   }
 }

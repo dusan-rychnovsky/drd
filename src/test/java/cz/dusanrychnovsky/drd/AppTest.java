@@ -21,19 +21,15 @@ public class AppTest {
     new DisplayMode(1920, 1200, 32, DisplayMode.REFRESH_RATE_UNKNOWN)
   );
 
-  private static final float PLAYER_SPEED = 1.f;
-
   private final Action exit = new Action("exit", InitialPressOnly);
   private final Action pause = new Action("pause", InitialPressOnly);
-  private final Action moveLeft = new Action("moveLeft");
-  private final Action moveRight = new Action("moveRight");
   private final Action jump = new Action("jump", InitialPressOnly);
 
   private Window window;
   private Input input;
   private Loop loop;
 
-  private Sprite player;
+  private Playground playground;
 
   private boolean paused;
 
@@ -46,11 +42,10 @@ public class AppTest {
     input = new Input(window);
     input.mapToKey(exit, KeyEvent.VK_ESCAPE);
     input.mapToKey(pause, KeyEvent.VK_P);
-    input.mapToKey(moveLeft, KeyEvent.VK_LEFT);
-    input.mapToKey(moveRight, KeyEvent.VK_RIGHT);
     input.mapToKey(jump, KeyEvent.VK_SPACE);
 
-    player = loadPlayer();
+    var player = loadPlayer();
+    playground = new Playground(input, 30, 30, 2 * window.getWidth() / 3, window.getHeight() - 60, player);
 
     loop = new Loop(this::update, this::draw);
     loop.run();
@@ -59,22 +54,19 @@ public class AppTest {
     System.out.println("DONE");
   }
 
-  private Sprite loadPlayer() {
-    var animation = Animation.builder()
-      .addFrame(loadImage("player.png"), 1)
-      .build();
-    var player = new Player(animation, 0.f, 0.f, 0.f, window.getWidth());
-    player.setPosition(
-      (window.getWidth() - player.getWidth()) / 2.f,
-      window.getHeight() - player.getHeight());
-    return player;
+  private Player loadPlayer() {
+    return new Player(
+      Animation.builder()
+        .addFrame(loadImage("player.png"), 1)
+        .build(),
+      0.f,
+      0.f);
   }
 
   private void update(long elapsedTime) {
     checkSystemInput();
     if (!paused) {
-      checkGameInput();
-      player.update(elapsedTime);
+      playground.update(elapsedTime);
     }
   }
 
@@ -94,34 +86,13 @@ public class AppTest {
     }
   }
 
-  private void checkGameInput() {
-    player.setVelocity(getPlayerDX(), player.getDY());
-  }
-
-  private float getPlayerDX() {
-    if (moveLeft.isPressed()) {
-      if (player.getPosX() > 0) {
-        return -PLAYER_SPEED;
-      }
-    }
-    if (moveRight.isPressed()) {
-      if (player.getPosX() + player.getWidth() < window.getWidth()) {
-        return PLAYER_SPEED;
-      }
-    }
-    return 0.f;
-  }
-
   private synchronized void draw() {
     var g = window.getGraphics();
 
     g.setColor(Color.black);
     g.fillRect(0, 0, window.getWidth(), window.getHeight());
 
-    g.drawImage(player.getImage(), Math.round(player.getPosX()), Math.round(player.getPosY()), null);
-
-    g.setColor(Color.red);
-    g.drawRect(0, 0, 1918, 1198);
+    playground.draw(g);
 
     if (paused) {
       g.setColor(Color.WHITE);
