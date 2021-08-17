@@ -16,20 +16,26 @@ public class AnimatedSprite implements Sprite {
     this.posY = posY;
   }
 
-  public void setPosition(float posX, float posY) {
+  public Sprite setPosition(float posX, float posY) {
     this.posX = posX;
     this.posY = posY;
+    return this;
   }
 
-  public void setVelocity(float dX, float dY) {
+  public Sprite setVelocity(float dX, float dY) {
     this.dX = dX;
     this.dY = dY;
+    return this;
   }
 
   public void update(long elapsedTime) {
     animation.update(elapsedTime);
     posX += dX * elapsedTime;
     posY += dY * elapsedTime;
+  }
+
+  public Animation getAnimation() {
+    return animation;
   }
 
   public Image getImage() {

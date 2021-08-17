@@ -10,7 +10,7 @@ public interface Sprite {
   float getDX();
   float getPosY();
   float getDY();
-  void setPosition(float posX, float posY);
-  void setVelocity(float dX, float dY);
+  Sprite setPosition(float posX, float posY);
+  Sprite setVelocity(float dX, float dY);
   void update(long elapsedTime);
 }

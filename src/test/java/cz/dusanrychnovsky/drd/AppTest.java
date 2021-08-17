@@ -45,13 +45,22 @@ public class AppTest {
     input.mapToKey(jump, KeyEvent.VK_SPACE);
 
     var player = loadPlayer();
-    playground = new Playground(input, 30, 30, 2 * window.getWidth() / 3, window.getHeight() - 60, player);
+    var bullet = loadBullet();
+    playground = new Playground(input, 30, 30, 2 * window.getWidth() / 3, window.getHeight() - 60, player, bullet);
 
     loop = new Loop(this::update, this::draw);
     loop.run();
 
     window.restoreScreen();
     System.out.println("DONE");
+  }
+
+  private Bullet loadBullet() {
+    return new Bullet(
+      Animation.builder()
+        .addFrame(loadImage("bullet.png"), 1)
+        .build()
+    );
   }
 
   private Player loadPlayer() {
