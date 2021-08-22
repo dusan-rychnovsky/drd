@@ -14,7 +14,12 @@ import static cz.dusanrychnovsky.drd.input.Action.Mode.InitialPressOnly;
 
 public class Playground {
 
-  private static final int BORDER_WIDTH = 2;
+  public static final int WIDTH = 800;
+  public static final int HEIGHT = 800;
+  public static final int BORDER_WIDTH = 2;
+
+  private int posX = 0;
+  private int posY = 0;
 
   private final Action shoot = new Action("shoot", InitialPressOnly);
   private final Action moveLeft = new Action("moveLeft");
@@ -24,40 +29,40 @@ public class Playground {
   private final List<Bullet> bullets = new ArrayList<>();
 
   private final Player player;
-  private final int posX;
-  private final int width;
-  private final int posY;
-  private final int height;
 
   private final Enemy enemy;
   private final List<Enemy> enemies = new ArrayList<>();
 
-  public Playground(Input input, int posX, int posY, int width, int height, Player player, Bullet bullet, Enemy enemy) {
-    this.posX = posX;
-    this.width = width;
-    this.posY = posY;
-    this.height = height;
+  public Playground(Input input, Player player, Bullet bullet, Enemy enemy) {
     this.enemy = enemy;
+    this.bullet = bullet;
+    this.player = player;
 
     input.mapToKey(shoot, KeyEvent.VK_SPACE);
     input.mapToKey(moveLeft, KeyEvent.VK_LEFT);
     input.mapToKey(moveRight, KeyEvent.VK_RIGHT);
+  }
 
-    this.bullet = bullet;
-    this.player = player;
+  public Playground init() {
     player.setPosition(
-      posX + (width - player.getWidth()) / 2.f,
-      posY + height - player.getHeight());
-
+      posX + (WIDTH - player.getWidth()) / 2.f,
+      posY + HEIGHT - player.getHeight());
     for (var i = 0; i < 10; i++) {
       enemies.add(
         (Enemy) enemy.clone()
           .setPosition(
             posX + 25 + i * (enemy.getWidth() + 30),
             posY + 10)
-        .setVelocity(0.f, .2f)
+          .setVelocity(0.f, .2f)
       );
     }
+    return this;
+  }
+
+  public Playground setPosition(int posX, int posY) {
+    this.posX = posX;
+    this.posY = posY;
+    return this;
   }
 
   public void update(long elapsedTime) {
@@ -98,8 +103,8 @@ public class Playground {
       player.setPosition(posX, player.getPosY());
       player.setVelocity(0.f, player.getDY());
     }
-    if (player.getPosX() + player.getWidth() > posX + width) {
-      player.setPosition(posX + width - player.getWidth(), player.getPosY());
+    if (player.getPosX() + player.getWidth() > posX + WIDTH) {
+      player.setPosition(posX + WIDTH - player.getWidth(), player.getPosY());
       player.setVelocity(0.f, player.getDY());
     }
   }
@@ -141,12 +146,12 @@ public class Playground {
   private void drawBorder(Graphics2D g) {
     g.setColor(Color.red);
     // left
-    g.fillRect(posX - BORDER_WIDTH, posY, BORDER_WIDTH, height);
+    g.fillRect(posX - BORDER_WIDTH, posY, BORDER_WIDTH, HEIGHT);
     // top
-    g.fillRect(posX - BORDER_WIDTH, posY - BORDER_WIDTH, width + 2 * BORDER_WIDTH, BORDER_WIDTH);
+    g.fillRect(posX - BORDER_WIDTH, posY - BORDER_WIDTH, WIDTH + 2 * BORDER_WIDTH, BORDER_WIDTH);
     // right
-    g.fillRect(posX + width, posY, BORDER_WIDTH, height);
+    g.fillRect(posX + WIDTH, posY, BORDER_WIDTH, HEIGHT);
     // bottom
-    g.fillRect(posX - BORDER_WIDTH, posY + height, width + 2 * BORDER_WIDTH, BORDER_WIDTH);
+    g.fillRect(posX - BORDER_WIDTH, posY + HEIGHT, WIDTH + 2 * BORDER_WIDTH, BORDER_WIDTH);
   }
 }
