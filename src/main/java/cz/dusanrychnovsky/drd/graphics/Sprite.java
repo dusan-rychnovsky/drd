@@ -13,4 +13,5 @@ public interface Sprite {
   Sprite setPosition(float posX, float posY);
   Sprite setVelocity(float dX, float dY);
   void update(long elapsedTime);
+  void draw(Graphics2D g);
 }

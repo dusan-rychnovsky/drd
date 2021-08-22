@@ -1,5 +1,6 @@
 package cz.dusanrychnovsky.drd;
 
+import cz.dusanrychnovsky.drd.graphics.Sprite;
 import cz.dusanrychnovsky.drd.input.Action;
 import cz.dusanrychnovsky.drd.input.Input;
 
@@ -128,12 +129,12 @@ public class Playground {
 
   public void draw(Graphics2D g) {
     drawBorder(g);
-    g.drawImage(player.getImage(), Math.round(player.getPosX()), Math.round(player.getPosY()), null);
+    player.draw(g);
     for (var bullet : bullets) {
-      g.drawImage(bullet.getImage(), Math.round(bullet.getPosX()), Math.round(bullet.getPosY()), null);
+      bullet.draw(g);
     }
     for (var enemy : enemies) {
-      g.drawImage(enemy.getImage(), Math.round(enemy.getPosX()), Math.round(enemy.getPosY()), null);
+      enemy.draw(g);
     }
   }
 

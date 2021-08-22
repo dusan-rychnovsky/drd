@@ -34,6 +34,10 @@ public class AnimatedSprite implements Sprite {
     posY += dY * elapsedTime;
   }
 
+  public void draw(Graphics2D g) {
+    g.drawImage(animation.getImage(), Math.round(getPosX()), Math.round(getPosY()), null);
+  }
+
   public Animation getAnimation() {
     return animation;
   }
