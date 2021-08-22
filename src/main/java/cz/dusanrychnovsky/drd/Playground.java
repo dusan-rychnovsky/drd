@@ -28,11 +28,15 @@ public class Playground {
   private final int posY;
   private final int height;
 
-  public Playground(Input input, int posX, int posY, int width, int height, Player player, Bullet bullet) {
+  private final Enemy enemy;
+  private final List<Enemy> enemies = new ArrayList<>();
+
+  public Playground(Input input, int posX, int posY, int width, int height, Player player, Bullet bullet, Enemy enemy) {
     this.posX = posX;
     this.width = width;
     this.posY = posY;
     this.height = height;
+    this.enemy = enemy;
 
     input.mapToKey(shoot, KeyEvent.VK_SPACE);
     input.mapToKey(moveLeft, KeyEvent.VK_LEFT);
@@ -43,12 +47,29 @@ public class Playground {
     player.setPosition(
       posX + (width - player.getWidth()) / 2.f,
       posY + height - player.getHeight());
+
+    for (var i = 0; i < 10; i++) {
+      enemies.add(
+        (Enemy) enemy.clone()
+          .setPosition(
+            posX + 25 + i * (enemy.getWidth() + 30),
+            posY + 10)
+        .setVelocity(0.f, .2f)
+      );
+    }
   }
 
   public void update(long elapsedTime) {
     checkGameInput();
     updatePlayer(elapsedTime);
     updateBullets(elapsedTime);
+    updateEnemies(elapsedTime);
+  }
+
+  private void updateEnemies(long elapsedTime) {
+    for (var enemy : enemies) {
+      enemy.update(elapsedTime);
+    }
   }
 
   private void updateBullets(long elapsedTime) {
@@ -110,6 +131,9 @@ public class Playground {
     g.drawImage(player.getImage(), Math.round(player.getPosX()), Math.round(player.getPosY()), null);
     for (var bullet : bullets) {
       g.drawImage(bullet.getImage(), Math.round(bullet.getPosX()), Math.round(bullet.getPosY()), null);
+    }
+    for (var enemy : enemies) {
+      g.drawImage(enemy.getImage(), Math.round(enemy.getPosX()), Math.round(enemy.getPosY()), null);
     }
   }
 

@@ -46,7 +46,8 @@ public class AppTest {
 
     var player = loadPlayer();
     var bullet = loadBullet();
-    playground = new Playground(input, 30, 30, 2 * window.getWidth() / 3, window.getHeight() - 60, player, bullet);
+    var enemy = loadEnemy();
+    playground = new Playground(input, 30, 30, 800, window.getHeight() - 60, player, bullet, enemy);
 
     loop = new Loop(this::update, this::draw);
     loop.run();
@@ -70,6 +71,14 @@ public class AppTest {
         .build(),
       0.f,
       0.f);
+  }
+
+  private Enemy loadEnemy() {
+    return new Enemy(
+      Animation.builder()
+        .addFrame(loadImage("enemy.png"), 1)
+        .build()
+    );
   }
 
   private void update(long elapsedTime) {
