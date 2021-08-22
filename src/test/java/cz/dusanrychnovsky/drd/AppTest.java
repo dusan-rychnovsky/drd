@@ -32,6 +32,7 @@ public class AppTest {
   private Loop loop;
 
   private Playground playground;
+  private Dashboard dashboard;
 
   private boolean paused;
 
@@ -55,6 +56,12 @@ public class AppTest {
         (window.getHeight() - Playground.HEIGHT - 2 * Playground.BORDER_WIDTH) / 2
       )
       .init();
+
+    dashboard = new Dashboard()
+      .setPosition(
+        playground.getPosX() + Playground.WIDTH + 2 * Playground.BORDER_WIDTH,
+        playground.getPosY()
+      );
 
     loop = new Loop(this::update, this::draw);
     loop.run();
@@ -112,6 +119,7 @@ public class AppTest {
     g.fillRect(0, 0, window.getWidth(), window.getHeight());
 
     playground.draw(g);
+    dashboard.draw(g);
 
     if (paused) {
       g.setColor(Color.GREEN);

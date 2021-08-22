@@ -65,6 +65,14 @@ public class Playground {
     return this;
   }
 
+  public int getPosX() {
+    return posX;
+  }
+
+  public int getPosY() {
+    return posY;
+  }
+
   public void update(long elapsedTime) {
     checkGameInput();
     updatePlayer(elapsedTime);
