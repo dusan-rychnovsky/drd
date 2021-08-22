@@ -65,26 +65,20 @@ public class AppTest {
 
   private Bullet loadBullet() {
     return new Bullet(
-      Animation.builder()
-        .addFrame(loadImage("bullet.png"), 1)
-        .build()
+      Animation.basic(loadImage("bullet.png"))
     );
   }
 
   private Player loadPlayer() {
     return new Player(
-      Animation.builder()
-        .addFrame(loadImage("player.png"), 1)
-        .build(),
+      Animation.basic(loadImage("player.png")),
       0.f,
       0.f);
   }
 
   private Enemy loadEnemy() {
     return new Enemy(
-      Animation.builder()
-        .addFrame(loadImage("enemy.png"), 1)
-        .build()
+      Animation.basic(loadImage("enemy.png"))
     );
   }
 

@@ -10,6 +10,12 @@ public class Animation {
   private long animationTime;
   private int currIndex;
 
+  public static Animation basic(Image image) {
+    return builder()
+      .addFrame(image, 1L)
+      .build();
+  }
+
   private Animation(ArrayList<Frame> frames, long totalDuration) {
     this.frames = frames;
     this.totalDuration = totalDuration;
