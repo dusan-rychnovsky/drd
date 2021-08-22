@@ -114,8 +114,9 @@ public class AppTest {
     playground.draw(g);
 
     if (paused) {
-      g.setColor(Color.WHITE);
-      g.drawString("PAUSED", 20, 42);
+      g.setColor(Color.GREEN);
+      g.setFont(new Font("Serif", Font.BOLD, 64));
+      drawCenteredString(g, "... GAME PAUSED ...", new Rectangle(0, 0, window.getWidth(), window.getHeight()));
     }
 
     g.dispose();
@@ -124,5 +125,12 @@ public class AppTest {
 
   private Image loadImage(String path) {
     return new ImageIcon(getClass().getClassLoader().getResource(path)).getImage();
+  }
+
+  private void drawCenteredString(Graphics g, String text, Rectangle rect) {
+    FontMetrics metrics = g.getFontMetrics(g.getFont());
+    int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+    int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
+    g.drawString(text, x, y);
   }
 }
