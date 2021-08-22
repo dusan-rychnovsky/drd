@@ -21,8 +21,6 @@ public class AppTest {
     new DisplayMode(1920, 1200, 32, DisplayMode.REFRESH_RATE_UNKNOWN)
   );
 
-  private final int CONTROLS_WIDTH = 396;
-
   private final Action exit = new Action("exit", InitialPressOnly);
   private final Action pause = new Action("pause", InitialPressOnly);
   private final Action jump = new Action("jump", InitialPressOnly);
@@ -52,7 +50,7 @@ public class AppTest {
     var enemy = loadEnemy();
     playground = new Playground(input, player, bullet, enemy)
       .setPosition(
-        (window.getWidth() - Playground.WIDTH - 2 * Playground.BORDER_WIDTH - CONTROLS_WIDTH) / 2,
+        (window.getWidth() - Playground.WIDTH - 2 * Playground.BORDER_WIDTH - Dashboard.WIDTH) / 2,
         (window.getHeight() - Playground.HEIGHT - 2 * Playground.BORDER_WIDTH) / 2
       )
       .init();
